@@ -1,277 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DeadlineDock</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#eef3f5;--panel:#fff;--ink:#12263a;--mute:#5d7184;--line:#d3dde3;--brand:#0f6f8f;--over:#c0392b;--today:#d1561f;--soon:#b8860b;--ok:#2e8b57;--overbg:#fbe9e6;--soonbg:#fbf3dc;--okbg:#e5f3ea;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1b28;--panel:#142a3b;--ink:#e6eef3;--mute:#93a9b9;--line:#26435a;--brand:#4cc0e3;--over:#ff8a7a;--today:#ff9b6b;--soon:#f0c24a;--ok:#62d08f;--overbg:#3a2224;--soonbg:#352f1a;--okbg:#1b3a2c}}
-:root[data-theme="dark"]{--bg:#0d1b28;--panel:#142a3b;--ink:#e6eef3;--mute:#93a9b9;--line:#26435a;--brand:#4cc0e3;--over:#ff8a7a;--today:#ff9b6b;--soon:#f0c24a;--ok:#62d08f;--overbg:#3a2224;--soonbg:#352f1a;--okbg:#1b3a2c}
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Sora,system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:#12263a;color:#fff;padding:18px 20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
-h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.5px}
-header p{margin:2px 0 0;color:#a9c0d0;font-size:13px}
-.prog{min-width:230px}.prog b{font-size:13px;font-weight:600}
-.bar{height:10px;background:#2b445a;border-radius:6px;margin-top:6px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:#4cc0e3;transition:width .4s}
-.stats{display:flex;gap:8px;margin-top:8px;font-size:12px;flex-wrap:wrap}
-.stats span{background:#1d3a52;padding:2px 8px;border-radius:10px}
-main{max-width:1100px;margin:0 auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr 1.25fr}
-@media(max-width:820px){main{grid-template-columns:1fr}}
-section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
-h2{margin:0 0 12px;font-size:17px}
-h3{margin:14px 0 6px;font-size:14px;color:var(--mute)}
-form{display:grid;gap:8px;grid-template-columns:1fr 1fr}
-form .full{grid-column:1/-1}
-label{font-size:12px;color:var(--mute);display:grid;gap:3px}
-input,select,button{font:inherit;color:inherit}
-input,select{padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);width:100%}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
-button{cursor:pointer;border:1px solid var(--line);background:var(--bg);padding:7px 12px;border-radius:6px}
-button.pri{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.pri{color:#0d1b28}}
-button.sm{padding:3px 8px;font-size:12px}
-.err{color:var(--over);font-size:12px;min-height:16px;grid-column:1/-1;margin:0}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.chip{display:inline-flex;gap:6px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:2px 4px 2px 10px;font-size:13px}
-.chip button{border:0;background:none;color:var(--over);padding:0 6px;font-size:15px}
-.day{border-left:3px solid var(--brand);padding:2px 0 2px 10px;margin:8px 0}
-.day b{font-size:13px}
-.cls{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:2px 0}
-.cls .t{color:var(--mute);font-variant-numeric:tabular-nums}
-.warn{color:var(--over);font-size:12px}
-.tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
-@media(max-width:560px){.tools{grid-template-columns:1fr 1fr}.tools input{grid-column:1/-1}}
-ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.as{border:1px solid var(--line);border-left-width:5px;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start}
-.as .body{flex:1;min-width:0}
-.as .ttl{font-weight:600;overflow-wrap:anywhere}
-.as .meta{font-size:12px;color:var(--mute)}
-.as.done .ttl{text-decoration:line-through;color:var(--mute)}
-.as.done{border-left-color:var(--ok);background:var(--okbg)}
-.as.over{border-left-color:var(--over);background:var(--overbg)}
-.as.today{border-left-color:var(--today)}
-.as.soon{border-left-color:var(--soon);background:var(--soonbg)}
-.as.ok{border-left-color:var(--brand)}
-.flag{font-size:12px;font-weight:600;white-space:nowrap}
-.as.over .flag{color:var(--over)}.as.today .flag{color:var(--today)}.as.soon .flag{color:var(--soon)}.as.done .flag{color:var(--ok)}.as.ok .flag{color:var(--brand)}
-.acts{display:flex;gap:4px;margin-top:6px}
-.empty{color:var(--mute);font-size:13px;padding:8px 0}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:8px;max-width:1100px;margin:0 auto;padding:0 16px 24px;font-size:12px;color:var(--mute)}
-button.danger{color:var(--over);border-color:var(--over)}
-input[type=checkbox]{width:18px;height:18px;margin-top:2px}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeadlineDock | Class Schedule and Assignment Planner</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div><h1>DeadlineDock</h1><p>Classes and deadlines, all in one place</p></div>
-  <div class="prog" aria-live="polite">
-    <b id="progTxt">0 of 0 assignments done</b>
-    <div class="bar"><i id="progBar"></i></div>
-    <div class="stats" id="stats"></div>
+
+<header class="topbar">
+  <h1>DeadlineDock</h1>
+  <nav class="tabs" aria-label="Views">
+    <button type="button" class="btn tab" data-view="today" aria-current="page">Today</button>
+    <button type="button" class="btn tab" data-view="schedule">Schedule</button>
+    <button type="button" class="btn tab" data-view="assignments">Assignments</button>
+  </nav>
+  <div class="actions">
+    <button type="button" class="btn" id="btnAddSubject">+ Subject</button>
+    <button type="button" class="btn primary" id="btnAddAssignment">+ Assignment</button>
   </div>
 </header>
 
 <main>
-  <div>
-    <section>
-      <h2>Subjects</h2>
-      <form id="subjForm" novalidate>
-        <label class="full">Subject name<input id="sName" maxlength="40" placeholder="e.g. Web Development"></label>
-        <label>Class day<select id="sDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></label>
-        <label>Start<input id="sStart" type="time"></label>
-        <label>End<input id="sEnd" type="time"></label>
-        <button class="pri" type="submit">Add subject</button>
-        <p class="err" id="sErr" role="alert"></p>
-      </form>
-      <div class="chips" id="chips"></div>
-    </section>
-    <section style="margin-top:16px">
-      <h2>Weekly schedule</h2>
-      <div id="week"></div>
-    </section>
-  </div>
-
-  <div>
-    <section>
-      <h2 id="aHead">Add assignment</h2>
-      <form id="asForm" novalidate>
-        <label>Subject<select id="aSubj"></select></label>
-        <label>Due date<input id="aDue" type="date"></label>
-        <label class="full">Title<input id="aTitle" maxlength="80" placeholder="e.g. Lab 3: DOM events"></label>
-        <button class="pri" type="submit" id="aBtn">Add assignment</button>
-        <button type="button" id="aCancel" hidden>Cancel edit</button>
-        <p class="err" id="aErr" role="alert"></p>
-      </form>
-    </section>
-    <section style="margin-top:16px">
-      <h2>Assignments</h2>
-      <div class="tools">
-        <input id="q" type="search" placeholder="Search title" aria-label="Search by title">
-        <select id="fSubj" aria-label="Filter by subject"></select>
-        <select id="fStat" aria-label="Filter by status"><option value="all">All status</option><option value="pending">Pending</option><option value="done">Done</option><option value="overdue">Overdue</option><option value="soon">Due soon</option></select>
-        <select id="sort" aria-label="Sort"><option value="asc">Earliest due</option><option value="desc">Latest due</option></select>
+  <!-- Feature 6: Today dashboard -->
+  <section id="view-today" aria-label="Today">
+    <div class="cards">
+      <div class="card"><span class="card-label">Progress</span><strong id="statProgress">0 of 0 done</strong><div id="statProgressBar"></div></div>
+      <div class="card"><span class="card-label">Due today</span><strong id="statDueToday">0</strong></div>
+      <div class="card"><span class="card-label">Overdue</span><strong id="statOverdue">0</strong></div>
+    </div>
+    <div class="two-col">
+      <div>
+        <h2>Today's classes <span class="sub" id="todayDayName"></span></h2>
+        <ul class="items" id="todayClasses"></ul>
       </div>
-      <ul id="list"></ul>
-    </section>
-  </div>
+      <div>
+        <h2>Needs attention</h2>
+        <ul class="items" id="attentionList"></ul>
+      </div>
+    </div>
+    <h2>Progress per subject</h2>
+    <div id="subjectProgress" class="subject-progress"></div>
+  </section>
+
+  <!-- Features 1 and 2: Subjects and weekly schedule -->
+  <section id="view-schedule" aria-label="Weekly schedule" hidden>
+    <div id="overlapWarn" class="alert" role="alert" hidden></div>
+    <div id="weekGrid" class="week"></div>
+    <h2>Subjects</h2>
+    <ul class="items" id="subjectList"></ul>
+  </section>
+
+  <!-- Features 3, 4, 5, 7: Assignments -->
+  <section id="view-assignments" aria-label="Assignments" hidden>
+    <div class="progress-row">
+      <strong id="progressText">0 of 0 done</strong>
+      <div id="progressBar" class="grow"></div>
+      <label class="inline-label">Due soon within
+        <select id="dueSoonDays" aria-label="Due soon threshold in days">
+          <option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option>
+          <option value="4">4 days</option><option value="5">5 days</option><option value="6">6 days</option><option value="7">7 days</option>
+        </select>
+      </label>
+    </div>
+    <div class="toolbar" aria-label="Search and filters">
+      <input type="search" id="searchInput" placeholder="Search by title" aria-label="Search assignments">
+      <select id="subjectFilter" aria-label="Filter by subject"></select>
+      <select id="statusFilter" aria-label="Filter by status">
+        <option value="all">Status: All</option><option>Overdue</option><option>Due Today</option>
+        <option>Due Soon</option><option>Upcoming</option><option>Done</option>
+      </select>
+      <select id="typeFilter" aria-label="Filter by type">
+        <option value="all">Type: All</option><option>Assignment</option><option>Quiz</option><option>Project</option><option>Exam</option>
+      </select>
+      <select id="priorityFilter" aria-label="Filter by priority">
+        <option value="all">Priority: All</option><option>High</option><option>Medium</option><option>Low</option>
+      </select>
+      <select id="sortBy" aria-label="Sort assignments">
+        <option value="due">Sort: Due date</option><option value="subject">Sort: Subject</option><option value="priority">Sort: Priority</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table id="asgTable">
+        <thead><tr><th>Done</th><th>Assignment</th><th>Subject</th><th>Due date</th><th>Flag</th><th>Actions</th></tr></thead>
+        <tbody id="asgBody"></tbody>
+      </table>
+      <p id="asgEmpty" class="empty" hidden></p>
+    </div>
+  </section>
 </main>
 
-<div class="foot">
-  <span>Saved in this browser only.</span>
-  <span><button class="danger sm" id="clear">Clear all data</button></span>
-</div>
+<footer class="footbar">
+  <button type="button" class="btn" id="btnExport">Export Data</button>
+  <button type="button" class="btn" id="btnImport">Import Data</button>
+  <input type="file" id="importFile" accept="application/json,.json" hidden>
+  <button type="button" class="btn" id="btnSample">Load Sample Data</button>
+  <button type="button" class="btn danger" id="btnClear">Clear All</button>
+  <span class="note">Saved automatically in this browser (localStorage).</span>
+  <span class="note" id="backupNote"></span>
+</footer>
 
-<script>
-(function(){
-  var KEY='deadlinedock.v1', SOON=3;
-  var DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  var state={subjects:[],assignments:[]}, editId=null, clearArmed=false;
-  var $=function(id){return document.getElementById(id)};
+<div id="toast" popover="manual" role="status" aria-live="polite"></div>
 
-  function load(){
-    try{var r=localStorage.getItem(KEY); if(r){var d=JSON.parse(r); if(d&&Array.isArray(d.subjects)&&Array.isArray(d.assignments)) state=d;}}catch(e){}
-  }
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-  function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-  function todayStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-  function daysLeft(due){var a=new Date(due+'T00:00:00'),b=new Date(todayStr()+'T00:00:00');return Math.round((a-b)/864e5)}
-  function status(a){
-    if(a.done) return {k:'done',t:'Done'};
-    var n=daysLeft(a.due);
-    if(n<0) return {k:'over',t:'Overdue by '+(-n)+(n===-1?' day':' days')};
-    if(n===0) return {k:'today',t:'Due today'};
-    if(n<=SOON) return {k:'soon',t:'Due in '+n+(n===1?' day':' days')};
-    return {k:'ok',t:n+' days left'};
-  }
-  function subjName(id){var s=state.subjects.find(function(x){return x.id===id});return s?s.name:'(deleted subject)'}
-  function fmt12(t){var p=t.split(':'),h=+p[0],m=p[1];return ((h%12)||12)+':'+m+(h<12?' AM':' PM')}
+<!-- Subject form -->
+<dialog id="subjectDialog">
+  <form id="subjectForm" novalidate>
+    <h2 id="subjectDialogTitle">Add Subject</h2>
+    <label>Subject name
+      <input id="sName" type="text" autocomplete="off">
+      <span class="err" id="err-sName"></span>
+    </label>
+    <div class="two-fields">
+      <label>Instructor or room (optional)
+        <input id="sPlace" type="text" autocomplete="off">
+      </label>
+      <label>Color tag
+        <select id="sColor"></select>
+      </label>
+    </div>
+    <h3>Class sessions</h3>
+    <div id="sessionRows" class="session-rows"></div>
+    <span class="err" id="err-sessions"></span>
+    <button type="button" class="btn" id="btnAddSession">+ Add session</button>
+    <div class="dialog-actions">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save Subject</button>
+    </div>
+  </form>
+</dialog>
 
-  function renderSubjects(){
-    $('chips').innerHTML=state.subjects.length?state.subjects.map(function(s){
-      return '<span class="chip">'+esc(s.name)+'<button aria-label="Delete '+esc(s.name)+'" data-del-subj="'+s.id+'">&times;</button></span>';
-    }).join(''):'<p class="empty">No subjects yet. Add your first one above.</p>';
-    var opts=state.subjects.map(function(s){return '<option value="'+s.id+'">'+esc(s.name)+'</option>'}).join('');
-    var cur=$('aSubj').value; $('aSubj').innerHTML=opts||'<option value="">Add a subject first</option>'; if(cur) $('aSubj').value=cur;
-    var fcur=$('fSubj').value; $('fSubj').innerHTML='<option value="all">All subjects</option>'+opts; $('fSubj').value=fcur||'all'; if(!$('fSubj').value) $('fSubj').value='all';
-  }
+<!-- Assignment form -->
+<dialog id="assignmentDialog">
+  <form id="assignmentForm" novalidate>
+    <h2 id="assignmentDialogTitle">Add Assignment</h2>
+    <label>Subject
+      <select id="aSubject"></select>
+      <span class="err" id="err-aSubject"></span>
+    </label>
+    <label>Title
+      <input id="aTitle" type="text" autocomplete="off">
+      <span class="err" id="err-aTitle"></span>
+    </label>
+    <div class="two-fields">
+      <label>Type
+        <select id="aType"><option>Assignment</option><option>Quiz</option><option>Project</option><option>Exam</option></select>
+      </label>
+      <label>Priority
+        <select id="aPriority"><option>Low</option><option selected>Medium</option><option>High</option></select>
+      </label>
+    </div>
+    <label>Due date
+      <input id="aDue" type="date">
+      <span class="err" id="err-aDue"></span>
+    </label>
+    <label>Notes (optional)
+      <textarea id="aNotes" rows="3"></textarea>
+    </label>
+    <div class="dialog-actions">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save Assignment</button>
+    </div>
+  </form>
+</dialog>
 
-  function overlaps(a,b){return a.day===b.day&&a.start<b.end&&b.start<a.end}
-  function renderWeek(){
-    var html='';
-    DAYS.forEach(function(d){
-      var items=state.subjects.filter(function(s){return s.day===d}).sort(function(a,b){return a.start<b.start?-1:1});
-      if(!items.length) return;
-      html+='<div class="day"><b>'+d+'</b>'+items.map(function(s){
-        var clash=items.some(function(o){return o!==s&&overlaps(s,o)});
-        return '<div class="cls"><span>'+esc(s.name)+(clash?' <span class="warn">Overlaps another class</span>':'')+'</span><span class="t">'+fmt12(s.start)+' – '+fmt12(s.end)+'</span></div>';
-      }).join('')+'</div>';
-    });
-    $('week').innerHTML=html||'<p class="empty">Your week is empty. Classes you add will appear here by day.</p>';
-  }
-
-  function renderProgress(){
-    var all=state.assignments, done=all.filter(function(a){return a.done}).length;
-    var over=0,soon=0;
-    all.forEach(function(a){var k=status(a).k; if(k==='over')over++; if(k==='today'||k==='soon')soon++;});
-    $('progTxt').textContent=done+' of '+all.length+' assignments done';
-    $('progBar').style.width=(all.length?done/all.length*100:0)+'%';
-    $('stats').innerHTML='<span>'+over+' overdue</span><span>'+soon+' due soon</span><span>'+(all.length-done)+' pending</span>';
-  }
-
-  function renderList(){
-    var q=$('q').value.trim().toLowerCase(), fs=$('fSubj').value, ft=$('fStat').value, dir=$('sort').value;
-    var rows=state.assignments.filter(function(a){
-      var k=status(a).k;
-      if(q&&a.title.toLowerCase().indexOf(q)<0) return false;
-      if(fs!=='all'&&a.subjectId!==fs) return false;
-      if(ft==='pending'&&a.done) return false;
-      if(ft==='done'&&!a.done) return false;
-      if(ft==='overdue'&&k!=='over') return false;
-      if(ft==='soon'&&k!=='soon'&&k!=='today') return false;
-      return true;
-    }).sort(function(a,b){var c=a.due<b.due?-1:a.due>b.due?1:0;return dir==='asc'?c:-c});
-    if(!rows.length){
-      $('list').innerHTML='<li class="empty">'+(state.assignments.length?'No assignments match your search or filters.':'No assignments yet. Add one above to start tracking deadlines.')+'</li>';
-      return;
-    }
-    $('list').innerHTML=rows.map(function(a){
-      var s=status(a);
-      return '<li class="as '+s.k+'"><input type="checkbox" data-done="'+a.id+'" '+(a.done?'checked':'')+' aria-label="Mark '+esc(a.title)+' as done">'+
-        '<div class="body"><div class="ttl">'+esc(a.title)+'</div><div class="meta">'+esc(subjName(a.subjectId))+' · Due '+a.due+'</div>'+
-        '<div class="acts"><button class="sm" data-edit="'+a.id+'">Edit</button><button class="sm danger" data-del="'+a.id+'">Delete</button></div></div>'+
-        '<span class="flag">'+s.t+'</span></li>';
-    }).join('');
-  }
-  function renderAll(){renderSubjects();renderWeek();renderProgress();renderList()}
-
-  // Subjects
-  $('subjForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    var name=$('sName').value.trim(), day=$('sDay').value, st=$('sStart').value, en=$('sEnd').value, err='';
-    if(!name) err='Enter a subject name.';
-    else if(state.subjects.some(function(s){return s.name.toLowerCase()===name.toLowerCase()&&s.day===day&&s.start===st})) err='That subject is already scheduled at this day and time.';
-    else if(!st||!en) err='Set a start and end time.';
-    else if(en<=st) err='End time must be after the start time.';
-    $('sErr').textContent=err; if(err) return;
-    state.subjects.push({id:uid(),name:name,day:day,start:st,end:en});
-    save(); $('sName').value=''; renderAll();
-  });
-  $('chips').addEventListener('click',function(e){
-    var id=e.target.getAttribute('data-del-subj'); if(!id) return;
-    state.subjects=state.subjects.filter(function(s){return s.id!==id});
-    state.assignments=state.assignments.filter(function(a){return a.subjectId!==id});
-    save(); renderAll();
-  });
-
-  // Assignments
-  function resetAssignForm(){editId=null;$('aTitle').value='';$('aDue').value='';$('aHead').textContent='Add assignment';$('aBtn').textContent='Add assignment';$('aCancel').hidden=true;$('aErr').textContent=''}
-  $('asForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    var subj=$('aSubj').value, title=$('aTitle').value.trim(), due=$('aDue').value, err='';
-    if(!subj) err='Add a subject before adding assignments.';
-    else if(!title) err='Enter an assignment title.';
-    else if(!due) err='Pick a due date.';
-    else if(due<todayStr()) err='Due date cannot be in the past.';
-    $('aErr').textContent=err; if(err) return;
-    if(editId){var a=state.assignments.find(function(x){return x.id===editId}); if(a){a.subjectId=subj;a.title=title;a.due=due}}
-    else state.assignments.push({id:uid(),subjectId:subj,title:title,due:due,done:false});
-    save(); resetAssignForm(); renderAll();
-  });
-  $('aCancel').addEventListener('click',resetAssignForm);
-  $('aDue').min=todayStr();
-
-  $('list').addEventListener('click',function(e){
-    var t=e.target, id;
-    if((id=t.getAttribute('data-del'))){state.assignments=state.assignments.filter(function(a){return a.id!==id});save();renderAll();}
-    else if((id=t.getAttribute('data-edit'))){
-      var a=state.assignments.find(function(x){return x.id===id}); if(!a) return;
-      editId=id;$('aSubj').value=a.subjectId;$('aTitle').value=a.title;$('aDue').value=a.due;
-      $('aHead').textContent='Edit assignment';$('aBtn').textContent='Save changes';$('aCancel').hidden=false;
-      $('aTitle').focus(); window.scrollTo({top:0,behavior:'smooth'});
-    }
-  });
-  $('list').addEventListener('change',function(e){
-    var id=e.target.getAttribute('data-done'); if(!id) return;
-    var a=state.assignments.find(function(x){return x.id===id}); if(a){a.done=e.target.checked;save();renderProgress();renderList();}
-  });
-  ['q','fSubj','fStat','sort'].forEach(function(id){$(id).addEventListener('input',renderList)});
-
-  // Clear all (two-step confirmation)
-  $('clear').addEventListener('click',function(){
-    var b=$('clear');
-    if(!clearArmed){clearArmed=true;b.textContent='Click again to delete everything';setTimeout(function(){clearArmed=false;b.textContent='Clear all data'},4000);return}
-    state={subjects:[],assignments:[]};save();clearArmed=false;b.textContent='Clear all data';resetAssignForm();renderAll();
-  });
-
-  load(); renderAll();
-})();
-</script>
+<script src="script.js"></script>
 </body>
-  </html>
+        </html>
